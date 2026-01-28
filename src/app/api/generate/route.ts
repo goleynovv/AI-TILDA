@@ -1,27 +1,28 @@
 import { NextResponse } from "next/server";
-import { createGenerateLandingChain } from "@/lib/agents/chain";
+import { createGeneratorChain } from "@/lib/agents/generator";
 
 export const maxDuration = 60;
 
 export async function POST(req: Request) {
   try {
-    const { interviewText } = await req.json();
+    const { ajtbdAnalysis } = await req.json();
 
-    if (!interviewText) {
+    if (!ajtbdAnalysis) {
       return NextResponse.json(
-        { error: "interviewText is required" },
+        { error: "ajtbdAnalysis is required" },
         { status: 400 }
       );
     }
 
-    const chain = createGenerateLandingChain();
-    const result = await chain.invoke({ interviewText });
+    const chain = createGeneratorChain();
+    const result = await chain.invoke({
+      ajtbdJson: JSON.stringify(ajtbdAnalysis, null, 2),
+    });
 
     return NextResponse.json(result);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    const stack = error instanceof Error ? error.stack : undefined;
-    console.error("Generate error:", message, stack);
+    console.error("Generate error:", message);
     return NextResponse.json(
       { error: "Failed to generate landing page", details: message },
       { status: 500 }

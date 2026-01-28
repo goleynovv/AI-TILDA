@@ -40,25 +40,45 @@ export function useAppState() {
 
       try {
         const interviewText = buildInterviewText(allAnswers);
-        const response = await fetch("/api/generate", {
+
+        // Step 1: Analyze interview (AJTBD extraction)
+        addMessage("assistant", "Анализирую ваш бизнес...");
+        const analyzeResponse = await fetch("/api/analyze", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ interviewText }),
         });
 
-        if (!response.ok) {
-          throw new Error("Generation failed");
+        if (!analyzeResponse.ok) {
+          const err = await analyzeResponse.json().catch(() => ({}));
+          throw new Error(err.details || "Analysis failed");
         }
 
-        const data = await response.json();
+        const ajtbdAnalysis = await analyzeResponse.json();
+
+        // Step 2: Generate landing page from analysis
+        addMessage("assistant", "Создаю лендинг на основе анализа...");
+        const generateResponse = await fetch("/api/generate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ ajtbdAnalysis }),
+        });
+
+        if (!generateResponse.ok) {
+          const err = await generateResponse.json().catch(() => ({}));
+          throw new Error(err.details || "Generation failed");
+        }
+
+        const data = await generateResponse.json();
         setLandingData(data as LandingPageData);
         setPhase("preview");
         addMessage("assistant", READY_MESSAGE);
       } catch (error) {
         console.error("Generation error:", error);
+        const msg = error instanceof Error ? error.message : "";
         addMessage(
           "assistant",
-          "Произошла ошибка при генерации. Попробуйте ещё раз."
+          `Произошла ошибка при генерации${msg ? `: ${msg}` : ""}. Попробуйте ещё раз.`
         );
         setPhase("interview");
         setCurrentQuestion(0);
