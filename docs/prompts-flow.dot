@@ -1,0 +1,215 @@
+digraph PromptsFlow {
+    rankdir=LR;
+    node [fontname="Arial", fontsize=10];
+    edge [fontname="Arial", fontsize=9];
+    graph [bgcolor="white", pad="0.5"];
+
+    // ===================
+    // INTERVIEWER PROMPT
+    // ===================
+
+    subgraph cluster_interviewer {
+        label="INTERVIEWER AGENT";
+        style=rounded;
+        bgcolor="#fff3e0";
+        color="#ff9800";
+        fontsize=12;
+
+        InterviewerPrompt [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8">
+                    <TR><TD BGCOLOR="#ffcc80"><B>System Prompt</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" BALIGN="LEFT">
+                        Ты — ИИ-маркетолог и интервьюер.<BR/>
+                        <BR/>
+                        <B>Роль:</B><BR/>
+                        • Веди беседу как эксперт<BR/>
+                        • Задавай открытые вопросы<BR/>
+                        • Извлекай AJTBD-сущности<BR/>
+                        <BR/>
+                        <B>Правила:</B><BR/>
+                        • 1 вопрос за раз<BR/>
+                        • Без терминов AJTBD<BR/>
+                        • Саммари каждые 3-4 обмена
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        InterviewerInput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#ffe0b2"><B>Input</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        • state (текущий)<BR/>
+                        • userMessage<BR/>
+                        • conversationHistory
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        InterviewerOutput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#ffe0b2"><B>Output</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        • stateUpdates {}<BR/>
+                        • nextMessage<BR/>
+                        • isComplete
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        InterviewerInput -> InterviewerPrompt -> InterviewerOutput;
+    }
+
+    // ===================
+    // GENERATOR PROMPT
+    // ===================
+
+    subgraph cluster_generator {
+        label="GENERATOR AGENT";
+        style=rounded;
+        bgcolor="#e8f5e9";
+        color="#4caf50";
+        fontsize=12;
+
+        GeneratorPrompt [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8">
+                    <TR><TD BGCOLOR="#a5d6a7"><B>System Prompt</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" BALIGN="LEFT">
+                        Ты — UX-архитектор и копирайтер.<BR/>
+                        <BR/>
+                        <B>Блоки лендинга:</B><BR/>
+                        1. hero — заголовок, подзаголовок, CTA<BR/>
+                        2. features — 3-4 пункта с иконками<BR/>
+                        3. problem — описание боли<BR/>
+                        4. how_it_works — 3 шага<BR/>
+                        5. competitors — 3-4 преимущества<BR/>
+                        6. cta — финальный призыв<BR/>
+                        <BR/>
+                        <B>Формат:</B> JSON с blocks[]
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        GeneratorInput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#c8e6c9"><B>Input</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        AjtbdState {<BR/>
+                        &nbsp;&nbsp;productDescription,<BR/>
+                        &nbsp;&nbsp;targetAudience,<BR/>
+                        &nbsp;&nbsp;pointA, pointB,<BR/>
+                        &nbsp;&nbsp;valueProposition,<BR/>
+                        &nbsp;&nbsp;...<BR/>
+                        }
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        GeneratorOutput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#c8e6c9"><B>Output</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        LandingPageData {<BR/>
+                        &nbsp;&nbsp;settings,<BR/>
+                        &nbsp;&nbsp;blocks: [<BR/>
+                        &nbsp;&nbsp;&nbsp;&nbsp;{id, type, content}<BR/>
+                        &nbsp;&nbsp;]<BR/>
+                        }
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        GeneratorInput -> GeneratorPrompt -> GeneratorOutput;
+    }
+
+    // ===================
+    // EDITOR PROMPT
+    // ===================
+
+    subgraph cluster_editor {
+        label="EDITOR AGENT";
+        style=rounded;
+        bgcolor="#fce4ec";
+        color="#e91e63";
+        fontsize=12;
+
+        EditorPrompt [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="8">
+                    <TR><TD BGCOLOR="#f48fb1"><B>System Prompt</B></TD></TR>
+                    <TR><TD ALIGN="LEFT" BALIGN="LEFT">
+                        Ты — ИИ-ассистент для<BR/>
+                        редактирования лендинга.<BR/>
+                        <BR/>
+                        <B>Правила:</B><BR/>
+                        • blocks — это МАССИВ<BR/>
+                        • Меняй только запрошенное<BR/>
+                        • Сохраняй остальное<BR/>
+                        • Верни полный JSON
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        EditorInput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#f8bbd9"><B>Input</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        • editRequest<BR/>
+                        • currentSiteJson
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        EditorOutput [
+            label=<
+                <TABLE BORDER="0" CELLBORDER="1" CELLSPACING="0" CELLPADDING="6">
+                    <TR><TD BGCOLOR="#f8bbd9"><B>Output</B></TD></TR>
+                    <TR><TD ALIGN="LEFT">
+                        Updated<BR/>
+                        LandingPageData
+                    </TD></TR>
+                </TABLE>
+            >,
+            shape=plaintext
+        ];
+
+        EditorInput -> EditorPrompt -> EditorOutput;
+    }
+
+    // Flow between stages
+    InterviewerOutput -> GeneratorInput [
+        label="isComplete: true",
+        style=bold,
+        color="#4caf50",
+        constraint=false
+    ];
+
+    GeneratorOutput -> EditorInput [
+        label="user edit request",
+        style=dashed,
+        color="#e91e63",
+        constraint=false
+    ];
+}

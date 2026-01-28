@@ -1,0 +1,149 @@
+digraph AITilda {
+    rankdir=TB;
+    splines=ortho;
+    node [fontname="Arial", fontsize=11];
+    edge [fontname="Arial", fontsize=9];
+
+    // Styling
+    graph [bgcolor="white", pad="0.5"];
+
+    // ===================
+    // MAIN FLOW
+    // ===================
+
+    subgraph cluster_main {
+        label="AI-Tilda v2.0 — Flow";
+        style=rounded;
+        bgcolor="#f8f9fa";
+        fontsize=14;
+        fontname="Arial Bold";
+
+        // User
+        User [
+            label="👤 Пользователь",
+            shape=ellipse,
+            style=filled,
+            fillcolor="#e3f2fd",
+            color="#1976d2"
+        ];
+
+        // Phase 1: Interview
+        subgraph cluster_interview {
+            label="ЭТАП 1: ИНТЕРВЬЮ";
+            style=rounded;
+            bgcolor="#fff3e0";
+            color="#ff9800";
+
+            InterviewAPI [
+                label="/api/interview\n(POST)",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#ffe0b2"
+            ];
+
+            InterviewerAgent [
+                label="Interviewer Agent\n─────────────\ninterviewer.ts",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#ffcc80"
+            ];
+
+            AjtbdState [
+                label="AJTBD State\n─────────────\n• productDescription\n• targetAudience\n• coreJob\n• bigJob\n• trigger\n• pointA\n• pointB\n• barriers\n• alternatives\n• valueProposition",
+                shape=note,
+                style=filled,
+                fillcolor="#fff8e1"
+            ];
+        }
+
+        // Phase 2: Generation
+        subgraph cluster_generate {
+            label="ЭТАП 2: ГЕНЕРАЦИЯ";
+            style=rounded;
+            bgcolor="#e8f5e9";
+            color="#4caf50";
+
+            GenerateAPI [
+                label="/api/generate\n(POST)",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#c8e6c9"
+            ];
+
+            GeneratorAgent [
+                label="Generator Agent\n─────────────\ngenerator.ts",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#a5d6a7"
+            ];
+
+            LandingJSON [
+                label="Landing JSON\n─────────────\n• settings\n• blocks[ ]\n  - hero\n  - features\n  - problem\n  - how_it_works\n  - competitors\n  - cta",
+                shape=note,
+                style=filled,
+                fillcolor="#f1f8e9"
+            ];
+        }
+
+        // Phase 3: Preview & Edit
+        subgraph cluster_edit {
+            label="ЭТАП 3: ПРЕВЬЮ + РЕДАКТИРОВАНИЕ";
+            style=rounded;
+            bgcolor="#fce4ec";
+            color="#e91e63";
+
+            Preview [
+                label="🖥️ Превью\nЛендинга",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#f8bbd9"
+            ];
+
+            ChatAPI [
+                label="/api/chat\n(POST)",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#f48fb1"
+            ];
+
+            EditorAgent [
+                label="Editor Agent\n─────────────\neditor.ts",
+                shape=box,
+                style="filled,rounded",
+                fillcolor="#f06292"
+            ];
+        }
+
+        // LLM
+        LLM [
+            label="🤖 LLM\n(claude-3.5-haiku)\nvia OpenRouter",
+            shape=cylinder,
+            style=filled,
+            fillcolor="#e1bee7",
+            color="#9c27b0"
+        ];
+
+        // Connections
+        User -> InterviewAPI [label="сообщение"];
+        InterviewAPI -> InterviewerAgent;
+        InterviewerAgent -> LLM [label="prompt"];
+        LLM -> InterviewerAgent [label="response"];
+        InterviewerAgent -> AjtbdState [label="stateUpdates"];
+        AjtbdState -> User [label="nextMessage\n(loop until isComplete)"];
+
+        AjtbdState -> GenerateAPI [label="isComplete: true", style=bold, color="#4caf50"];
+        GenerateAPI -> GeneratorAgent;
+        GeneratorAgent -> LLM [label="prompt"];
+        LLM -> GeneratorAgent [label="response"];
+        GeneratorAgent -> LandingJSON;
+
+        LandingJSON -> Preview;
+        Preview -> User [label="показ"];
+
+        User -> ChatAPI [label="запрос правки"];
+        ChatAPI -> EditorAgent;
+        EditorAgent -> LLM [label="prompt"];
+        LLM -> EditorAgent [label="response"];
+        EditorAgent -> LandingJSON [label="обновление"];
+    }
+}
