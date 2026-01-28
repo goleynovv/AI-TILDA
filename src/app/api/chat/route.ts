@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createEditorChain } from "@/lib/agents/editor";
+import { runEditor } from "@/lib/agents/editor";
 
 export const maxDuration = 60;
 
@@ -14,17 +14,16 @@ export async function POST(req: Request) {
       );
     }
 
-    const chain = createEditorChain();
-    const result = await chain.invoke({
+    const result = await runEditor(
       editRequest,
-      currentSiteJson: JSON.stringify(currentSiteJson, null, 2),
-    });
-
+      JSON.stringify(currentSiteJson, null, 2)
+    );
     return NextResponse.json(result);
-  } catch (error) {
-    console.error("Edit error:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    console.error("Edit error:", message);
     return NextResponse.json(
-      { error: "Failed to edit landing page" },
+      { error: "Failed to edit landing page", details: message },
       { status: 500 }
     );
   }

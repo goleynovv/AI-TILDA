@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createAnalyzerChain } from "@/lib/agents/analyzer";
+import { runAnalyzer } from "@/lib/agents/analyzer";
 
 export const maxDuration = 60;
 
@@ -14,9 +14,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const chain = createAnalyzerChain();
-    const result = await chain.invoke({ interviewText });
-
+    const result = await runAnalyzer(interviewText);
     return NextResponse.json(result);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

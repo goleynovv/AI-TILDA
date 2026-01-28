@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { createGeneratorChain } from "@/lib/agents/generator";
+import { runGenerator } from "@/lib/agents/generator";
 
 export const maxDuration = 60;
 
@@ -14,11 +14,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const chain = createGeneratorChain();
-    const result = await chain.invoke({
-      ajtbdJson: JSON.stringify(ajtbdAnalysis, null, 2),
-    });
-
+    const result = await runGenerator(JSON.stringify(ajtbdAnalysis, null, 2));
     return NextResponse.json(result);
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

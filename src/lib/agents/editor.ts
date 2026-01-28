@@ -1,19 +1,22 @@
-import { ChatPromptTemplate } from "@langchain/core/prompts";
 import { createLLM } from "./model";
-import { landingPageSchema } from "../schemas";
 import { EDITOR_SYSTEM_PROMPT } from "../prompts";
 
-export function createEditorChain() {
+export async function runEditor(editRequest: string, currentSiteJson: string) {
   const llm = createLLM();
-  const structuredLlm = llm.withStructuredOutput(landingPageSchema);
 
-  const prompt = ChatPromptTemplate.fromMessages([
-    ["system", EDITOR_SYSTEM_PROMPT],
-    [
-      "human",
-      "Запрос пользователя:\n{editRequest}\n\nТекущий JSON сайта:\n{currentSiteJson}\n\nВерни обновлённый JSON.",
-    ],
+  const response = await llm.invoke([
+    ["system", EDITOR_SYSTEM_PROMPT + "\n\nОтветь строго в формате JSON без markdown-обёртки."],
+    ["human", `Запрос пользователя:\n${editRequest}\n\nТекущий JSON сайта:\n${currentSiteJson}\n\nВерни обновлённый JSON.`],
   ]);
 
-  return prompt.pipe(structuredLlm);
+  const text = typeof response.content === "string"
+    ? response.content
+    : JSON.stringify(response.content);
+
+  const jsonMatch = text.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    throw new Error("Failed to parse editor response as JSON");
+  }
+
+  return JSON.parse(jsonMatch[0]);
 }
