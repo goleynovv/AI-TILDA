@@ -1,7 +1,54 @@
 import { callLLM } from "./model";
-import { GENERATOR_SYSTEM_PROMPT } from "../prompts";
+import type { AjtbdState } from "@/types/state";
 
-export async function runGenerator(ajtbdJson: string) {
+const GENERATOR_SYSTEM_PROMPT = `Ты — UX-архитектор и копирайтер, эксперт по созданию продающих лендингов по методологии AJTBD.
+
+Тебе на вход дан заполненный State с AJTBD-сущностями продукта. Твоя задача — создать структуру лендинга с текстами для каждого блока.
+
+**Структура лендинга (используй ТОЧНО эти типы блоков):**
+
+1. **hero** — Главный экран
+   content: {{ "title": "главный заголовок на основе Core Job и ценности", "subtitle": "раскрывающий подзаголовок", "ctaText": "текст кнопки" }}
+
+2. **features** — Результаты / Точка Б
+   content: {{ "title": "заголовок секции", "items": [{{ "icon": "rocket|check|star|shield|clock|heart|target|smile", "title": "название", "description": "описание" }}] }}
+   3-4 пункта
+
+3. **problem** — Проблема / Точка А
+   content: {{ "title": "заголовок", "description": "описание проблемы с эмпатией" }}
+
+4. **how_it_works** — Как это работает
+   content: {{ "title": "заголовок", "steps": [{{ "title": "шаг", "description": "описание" }}] }}
+   Ровно 3 шага
+
+5. **competitors** — Почему мы / vs альтернативы
+   content: {{ "title": "заголовок", "items": [{{ "title": "преимущество", "description": "описание" }}] }}
+   3-4 пункта
+
+6. **cta** — Призыв к действию
+   content: {{ "title": "заголовок", "description": "описание", "ctaText": "текст кнопки" }}
+
+**Правила:**
+- Пиши на русском языке
+- Используй конкретику из State, а не абстрактные фразы
+- Заголовки должны цеплять и быть ёмкими
+- Каждый блок должен иметь уникальный id (hero-1, features-1 и т.д.)
+- settings: theme "light", подходящий accentColor (HEX), mood (strict|minimal|friendly|creative)`;
+
+export async function runGenerator(state: AjtbdState) {
+  const stateDescription = `
+**Продукт/услуга:** ${state.productDescription || "не указано"}
+**Целевая аудитория:** ${state.targetAudience || "не указана"}
+**Core Job (основная работа):** ${state.coreJob || "не указано"}
+**Big Job (большая цель):** ${state.bigJob || "не указано"}
+**Триггер поиска:** ${state.trigger || "не указан"}
+**Точка А (проблема):** ${state.pointA || "не указана"}
+**Точка Б (результат):** ${state.pointB || "не указан"}
+**Барьеры:** ${state.barriers || "не указаны"}
+**Альтернативы:** ${state.alternatives || "не указаны"}
+**Ценностное предложение:** ${state.valueProposition || "не указано"}
+`.trim();
+
   const text = await callLLM([
     {
       role: "system",
@@ -9,7 +56,7 @@ export async function runGenerator(ajtbdJson: string) {
     },
     {
       role: "user",
-      content: `AJTBD-анализ продукта:\n\n${ajtbdJson}\n\nСоздай структуру и тексты для лендинга. Ответь JSON.`,
+      content: `AJTBD State продукта:\n\n${stateDescription}\n\nСоздай структуру и тексты для лендинга. Ответь JSON.`,
     },
   ]);
 
