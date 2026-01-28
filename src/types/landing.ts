@@ -22,14 +22,15 @@ export interface LandingSettings {
 }
 
 export interface HeroContent {
-  oneliner: string;
+  title: string;
   subtitle: string;
   ctaText: string;
 }
 
 export interface FeatureItem {
   icon: string;
-  text: string;
+  title: string;
+  description: string;
 }
 
 export interface FeaturesContent {
@@ -52,15 +53,20 @@ export interface HowItWorksContent {
   steps: HowItWorksStep[];
 }
 
+export interface CompetitorItem {
+  title: string;
+  description: string;
+}
+
 export interface CompetitorsContent {
   title: string;
-  points: string[];
+  items: CompetitorItem[];
 }
 
 export interface CtaContent {
   title: string;
   description: string;
-  buttonText: string;
+  ctaText: string;
 }
 
 export interface LandingBlock {

@@ -39,9 +39,12 @@ export default function FeaturesBlock({ content, accentColor }: Props) {
               className="flex items-start gap-4 rounded-xl bg-white p-5 shadow-sm"
             >
               <span className="text-2xl">{getIcon(item.icon)}</span>
-              <p className="text-sm leading-relaxed text-gray-700">
-                {item.text}
-              </p>
+              <div>
+                <p className="font-medium text-gray-900">{item.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-gray-700">
+                  {item.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>

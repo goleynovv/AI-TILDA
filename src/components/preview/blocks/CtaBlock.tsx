@@ -19,7 +19,7 @@ export default function CtaBlock({ content, accentColor }: Props) {
         <button className="mt-8 rounded-xl bg-white px-8 py-3.5 text-base font-semibold transition-opacity hover:opacity-90"
           style={{ color: accentColor }}
         >
-          {content.buttonText}
+          {content.ctaText}
         </button>
       </div>
     </section>

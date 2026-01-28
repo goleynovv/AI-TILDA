@@ -11,7 +11,7 @@ export default function HeroBlock({ content, accentColor }: Props) {
   return (
     <section className="flex min-h-[60vh] flex-col items-center justify-center px-6 py-20 text-center">
       <h1 className="max-w-3xl text-4xl font-bold leading-tight text-gray-900 md:text-5xl">
-        {content.oneliner}
+        {content.title}
       </h1>
       <p className="mt-6 max-w-2xl text-lg text-gray-600">{content.subtitle}</p>
       <button

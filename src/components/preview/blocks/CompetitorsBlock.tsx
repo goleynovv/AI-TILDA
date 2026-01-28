@@ -15,7 +15,7 @@ export default function CompetitorsBlock({ content, accentColor }: Props) {
           {content.title}
         </h2>
         <div className="mt-10 space-y-4">
-          {content.points.map((point, i) => (
+          {content.items.map((item, i) => (
             <div
               key={i}
               className="flex items-start gap-3 rounded-xl bg-white p-5 shadow-sm"
@@ -26,7 +26,12 @@ export default function CompetitorsBlock({ content, accentColor }: Props) {
               >
                 ✓
               </span>
-              <p className="text-sm leading-relaxed text-gray-700">{point}</p>
+              <div>
+                <p className="font-medium text-gray-900">{item.title}</p>
+                <p className="mt-1 text-sm leading-relaxed text-gray-700">
+                  {item.description}
+                </p>
+              </div>
             </div>
           ))}
         </div>
