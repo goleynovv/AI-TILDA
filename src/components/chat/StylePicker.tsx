@@ -65,31 +65,6 @@ export default function StylePicker({ settings, onUpdate }: Props) {
         </div>
       </div>
 
-      <div>
-        <p className="text-xs font-medium text-gray-500 mb-2">Тема</p>
-        <div className="flex gap-2">
-          <button
-            onClick={() => onUpdate({ theme: "light" })}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              settings.theme === "light"
-                ? "bg-[var(--color-accent)] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Светлая
-          </button>
-          <button
-            onClick={() => onUpdate({ theme: "dark" })}
-            className={`rounded-lg px-3 py-1.5 text-xs font-medium transition-colors ${
-              settings.theme === "dark"
-                ? "bg-[var(--color-accent)] text-white"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200"
-            }`}
-          >
-            Тёмная
-          </button>
-        </div>
-      </div>
     </div>
   );
 }

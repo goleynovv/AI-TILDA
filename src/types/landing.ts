@@ -16,7 +16,7 @@ export interface AjtbdAnalysis {
 }
 
 export interface LandingSettings {
-  theme: "light" | "dark";
+  theme: "light";
   accentColor: string;
   mood: "strict" | "minimal" | "friendly" | "creative";
 }

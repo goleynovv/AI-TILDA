@@ -28,12 +28,24 @@ const GENERATOR_SYSTEM_PROMPT = `Ты — UX-архитектор и копир�
 6. **cta** — Призыв к действию
    content: {{ "title": "заголовок", "description": "описание", "ctaText": "текст кнопки" }}
 
+**Формат ответа (СТРОГО соблюдай):**
+{{
+  "settings": {{ "theme": "light", "accentColor": "#HEX", "mood": "friendly" }},
+  "blocks": [
+    {{ "id": "hero-1", "type": "hero", "content": {{ ... }} }},
+    {{ "id": "features-1", "type": "features", "content": {{ ... }} }},
+    {{ "id": "problem-1", "type": "problem", "content": {{ ... }} }},
+    {{ "id": "how_it_works-1", "type": "how_it_works", "content": {{ ... }} }},
+    {{ "id": "competitors-1", "type": "competitors", "content": {{ ... }} }},
+    {{ "id": "cta-1", "type": "cta", "content": {{ ... }} }}
+  ]
+}}
+
 **Правила:**
+- blocks — это МАССИВ объектов, каждый с полями id, type, content
 - Пиши на русском языке
 - Используй конкретику из State, а не абстрактные фразы
-- Заголовки должны цеплять и быть ёмкими
-- Каждый блок должен иметь уникальный id (hero-1, features-1 и т.д.)
-- settings: theme "light", подходящий accentColor (HEX), mood (strict|minimal|friendly|creative)`;
+- Заголовки должны цеплять и быть ёмкими`;
 
 export async function runGenerator(state: AjtbdState) {
   const stateDescription = `

@@ -23,10 +23,9 @@ interface Props {
 export default function LandingRenderer({ data }: Props) {
   const { settings, blocks } = data;
   const accent = settings.accentColor;
-  const isDark = settings.theme === "dark";
 
   return (
-    <div className={isDark ? "bg-gray-900" : "bg-white"}>
+    <div className="bg-white">
       {blocks.map((block) => {
         switch (block.type) {
           case "hero":
