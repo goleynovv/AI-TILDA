@@ -18,10 +18,12 @@ export async function POST(req: Request) {
     const result = await chain.invoke({ interviewText });
 
     return NextResponse.json(result);
-  } catch (error) {
-    console.error("Generate error:", error);
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    const stack = error instanceof Error ? error.stack : undefined;
+    console.error("Generate error:", message, stack);
     return NextResponse.json(
-      { error: "Failed to generate landing page" },
+      { error: "Failed to generate landing page", details: message },
       { status: 500 }
     );
   }

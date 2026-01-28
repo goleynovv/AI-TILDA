@@ -18,12 +18,12 @@ export const GENERATOR_SYSTEM_PROMPT = `Ты — UX-архитектор и ко
 
 **ВАЖНО: Используй СТРОГО следующую структуру JSON для каждого блока:**
 
-1. **hero** — content: { "title": "заголовок", "subtitle": "подзаголовок", "ctaText": "текст кнопки" }
-2. **features** — content: { "title": "заголовок секции", "items": [{ "icon": "rocket", "title": "название", "description": "описание" }] }. Иконки: check, smile, rocket, shield, clock, star, heart, target. 3-4 пункта.
-3. **problem** — content: { "title": "заголовок", "description": "описание проблемы" }
-4. **how_it_works** — content: { "title": "заголовок", "steps": [{ "title": "шаг", "description": "описание" }] }. Ровно 3 шага.
-5. **competitors** — content: { "title": "заголовок", "items": [{ "title": "преимущество", "description": "описание" }] }. 3-4 пункта.
-6. **cta** — content: { "title": "заголовок", "description": "описание", "ctaText": "текст кнопки" }
+1. **hero** — content: {{ "title": "заголовок", "subtitle": "подзаголовок", "ctaText": "текст кнопки" }}
+2. **features** — content: {{ "title": "заголовок секции", "items": [{{ "icon": "rocket", "title": "название", "description": "описание" }}] }}. Иконки: check, smile, rocket, shield, clock, star, heart, target. 3-4 пункта.
+3. **problem** — content: {{ "title": "заголовок", "description": "описание проблемы" }}
+4. **how_it_works** — content: {{ "title": "заголовок", "steps": [{{ "title": "шаг", "description": "описание" }}] }}. Ровно 3 шага.
+5. **competitors** — content: {{ "title": "заголовок", "items": [{{ "title": "преимущество", "description": "описание" }}] }}. 3-4 пункта.
+6. **cta** — content: {{ "title": "заголовок", "description": "описание", "ctaText": "текст кнопки" }}
 
 **Правила:**
 - Пиши на русском языке
