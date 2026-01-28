@@ -5,7 +5,12 @@ import type { AppPhase, ChatMessage } from "@/types/chat";
 import type { LandingPageData, LandingSettings } from "@/types/landing";
 import type { AjtbdState } from "@/types/state";
 import { createEmptyState } from "@/types/state";
-import { getGreetingMessage } from "@/lib/agents/interviewer";
+
+const GREETING_MESSAGE = `Привет! Я ваш личный ИИ-маркетолог. Моя задача — помочь вам создать продающий лендинг.
+
+Расскажите мне о вашем продукте или услуге, как другу за чашкой кофе. Что это такое и для кого?
+
+Можете описать своими словами — чем больше деталей, тем лучше получится результат.`;
 
 const GENERATING_MESSAGE =
   "Отлично, у меня достаточно информации! Сейчас создам для вас лендинг. Это займет немного времени...";
@@ -29,7 +34,7 @@ export function useAppState() {
   const [landingData, setLandingData] = useState<LandingPageData | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [messages, setMessages] = useState<ChatMessage[]>([
-    { id: generateId(), role: "assistant", content: getGreetingMessage() },
+    { id: generateId(), role: "assistant", content: GREETING_MESSAGE },
   ]);
 
   const addMessage = useCallback(
@@ -210,7 +215,7 @@ export function useAppState() {
     setAjtbdState(createEmptyState());
     setLandingData(null);
     setIsLoading(false);
-    setMessages([{ id: generateId(), role: "assistant", content: getGreetingMessage() }]);
+    setMessages([{ id: generateId(), role: "assistant", content: GREETING_MESSAGE }]);
   }, []);
 
   return {
