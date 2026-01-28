@@ -2,7 +2,7 @@ import { ChatOpenAI } from "@langchain/openai";
 
 export function createLLM() {
   return new ChatOpenAI({
-    modelName: "anthropic/claude-sonnet-4",
+    modelName: "anthropic/claude-3.5-haiku",
     openAIApiKey: process.env.OPENROUTER_API_KEY,
     configuration: {
       baseURL: "https://openrouter.ai/api/v1",
